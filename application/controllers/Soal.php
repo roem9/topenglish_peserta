@@ -310,7 +310,7 @@ class Soal extends CI_Controller {
 
         $image_name=$id.'.png'; //buat name dari qr code sesuai dengan nim
 
-        $params['data'] = $config[1]['value']."/sertifikat/no/".md5($id); //data yang akan di jadikan QR CODE
+        $params['data'] = $data_config[1]['value']."/sertifikat/no/".md5($id); //data yang akan di jadikan QR CODE
         $params['level'] = 'H'; //H=High
         $params['size'] = 10;
         $params['savename'] = FCPATH.$config['imagedir'].$image_name; //simpan image QR CODE ke folder assets/images/
