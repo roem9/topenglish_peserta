@@ -352,13 +352,18 @@
             let email = $(form+" [name='email']").val();
             let id_tes = "<?= $id?>"
 
+            
             let eror = required(form);
+
+            if( !validateEmail(email)) {
+                eror = 1
+            }
             
             if(eror == 1){
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Lengkapi data terlebih dahulu',
+                    text: 'Lengkapi data terlebih dahulu. Harap inputkan email yang valid',
                 })
             } else {
                 let table = "<?= $table?>";
