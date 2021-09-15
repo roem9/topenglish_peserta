@@ -355,7 +355,7 @@
             
             let eror = required(form);
 
-            if( !validateEmail(email)) {
+            if(validateEmail(email) === false) {
                 eror = 1
             }
             

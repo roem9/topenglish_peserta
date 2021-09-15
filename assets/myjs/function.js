@@ -87,7 +87,16 @@ function loading(){
     });
 }
 
-function validateEmail($email) {
-    var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    return emailReg.test( $email );
+// function validateEmail($email) {
+//     var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+//     return emailReg.test( $email );
+// }
+
+function validateEmail(email) {
+    var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if(!regex.test(email)) {
+        return false;
+    }else{
+        return true;
+    }
 }
