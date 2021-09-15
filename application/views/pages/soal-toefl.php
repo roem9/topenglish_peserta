@@ -354,10 +354,6 @@
 
             
             let eror = required(form);
-
-            if(validateEmail(email) === false) {
-                eror = 1
-            }
             
             if(eror == 1){
                 Swal.fire({
