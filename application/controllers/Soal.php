@@ -228,7 +228,7 @@ class Soal extends CI_Controller {
         $id = $this->Main_model->add_data("peserta_toefl", $data);
 
         // add barcode 
-            if($tes['tipe_tes'] == 'Tes TOEFL Kolaborasi'){
+            if($tes['tipe_tes'] == 'Tes TOEFL Kolaborasi' || $tes['tipe_tes'] == 'Tes TOEFL Kursusan'){
                 $this->add_sertifikat_toefl($id);
             }
         // add barcode 
