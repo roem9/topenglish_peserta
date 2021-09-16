@@ -15,17 +15,21 @@
                                             <center>
                                                 <img src="<?= $link_foto[0]['value']?>/assets/img/logo.png?t=<?= time()?>" width=150 class="img-fluid mb-3" alt="">
                                             </center>
-                                            <h5 class="m-0 font-weight-bold text-dark">No. Sertifikat : </i><?= $no_doc?></h5>
+                                            <h5 class="m-0 font-weight-bold text-dark">No. Sertifikat : </i><?= $no_doc?></h5><br>
                                             <p>Nama : <?= ucwords(strtolower($nama))?></p>
                                             <p>TTL : <?= $t4_lahir?>, <?= tgl_indo($tgl_lahir)?></p>
                                             <p>Alamat : <?= ucwords(strtolower($alamat))?></p>
-                                            <p>Nilai Listening : <?= $istima?></p>
-                                            <p>Nilai Structure : <?= $tarakib?></p>
-                                            <p>Nilai Reading : <?= $qiroah?></p>
-                                            <p>Skor TOEFL : <?= round($skor)?></p>
-                                            <p>Tgl Tes : <?= tgl_indo($tgl_tes)?></p>
+                                            <br>
+                                            <p>Hasil TOEFL Prediction Test</p>
+                                            <p>Listening : <?= $listening?></p>
+                                            <p>Structure : <?= $structure?></p>
+                                            <p>Reading : <?= $reading?></p>
+                                            <p>Total Score : <?= round($skor)?></p>
+                                            <br>
+                                            <p>Tanggal Tes : <?= tgl_indo($tgl_tes)?></p>
                                             <p>Berlaku Sampai : <?= tgl_indo($tgl_berakhir)?></p>
-                                            <p><small class="text-danger"><i>Catatan : Data diatas adalah data tes TOEFL peserta yang sebenar-benarnya. Dan tidak ada pengurangan dan penambahan nilai sedikitpun</i></small></p>
+                                            <br>
+                                            <p><small class="text-danger"><i>Note: Sertifikat dianggap valid jika data yang tertera pada sertifikat sama dengan data di atas. Jika terdapat kejanggalan, hubungi Rumah Belajar TOP English di 088807111144.</i></small></p>
                                         </div>
                                     </div>
                                 <?php else :?>

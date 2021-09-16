@@ -242,6 +242,7 @@ class Soal extends CI_Controller {
 
         $nama = str_replace(array_keys($replace_wa), $replace_wa, $this->input->post("nama"));
         $nama_tes = str_replace(array_keys($replace_wa), $replace_wa, $tes['nama_tes']);
+        $tgl_tes = date("d-M-Y", strtotime($tes['tgl_tes']));
 
         $replacements = array(
             '$nama' => $this->input->post("nama"),
@@ -258,7 +259,7 @@ class Soal extends CI_Controller {
             '$skor' => $skor,
             '$tgl_tes' => tgl_indo($tes["tgl_tes"], "lengkap"),
             '$tgl_pengumuman' => tgl_indo($tes["tgl_pengumuman"], "lengkap"),
-            '$link' => "<a target='_blank' href='https://wa.me/+".$config[3]['value']."?text=Permisi%20Kak%2C%20Saya%20".$nama."%2C%20Telah%20mengikuti%20".$nama_tes.".%20Saya%20ingin%20memesan%20sertifikat%20TOEFL'>Pesan Sertifikat Disini</a>",
+            '$link' => "<a target='_blank' href='https://wa.me/+".$config[3]['value']."?text=Hi%20admin%2C%20saya%20ingin%20mengambil%20sertifikat%20hasil%20test%20TOEFL%20Prediction%20saya....%F0%9F%98%8A%0ANama%20%3A%20".$nama."%0ATanggal%20tes%20%3A%20".$tgl_tes."'>Ambil Sertifikat</a>",
         );
 
         $msg = str_replace(array_keys($replacements), $replacements, $tes['msg']);
@@ -274,22 +275,23 @@ class Soal extends CI_Controller {
         $peserta = $this->Main_model->get_one("peserta_toefl", ["id" => $id]);
         $tes = $this->Main_model->get_one("tes", ["id_tes" => $peserta['id_tes']]);
         
-        $date = date('Y', strtotime($tes['tgl_tes']));
+        $date_year = date('Y', strtotime($tes['tgl_tes']));
+        $date_month = date('Y', strtotime($tes['tgl_tes']));
 
         $this->db->select("CONVERT(no_doc, UNSIGNED INTEGER) AS num");
         $this->db->from("peserta_toefl as a");
         $this->db->join("tes as b", "a.id_tes = b.id_tes");
-        $this->db->where("YEAR(tgl_tes)", $date);
+        $this->db->where("YEAR(tgl_tes)", $date_year);
+        $this->db->where("MONTH(tgl_tes)", $date_month);
         $this->db->order_by("num", "DESC");
         $data = $this->db->get()->row_array();
 
         if($data) $no = $data['num']+1;
         else $no = 1;
 
-        if($no > 0 && $no < 10) $no_doc = "000".$no;
-        elseif($no >= 10 && $no < 100) $no_doc = "00".$no;
-        elseif($no >= 100 && $no < 1000) $no_doc = "0".$no;
-        elseif($no >= 1000) $no_doc = $no;
+        if($no > 0 && $no < 10) $no_doc = "00".$no;
+        elseif($no >= 10 && $no < 100) $no_doc = "0".$no;
+        elseif($no >= 100) $no_doc = $no;
         
         $this->load->library('qrcode/ciqrcode'); //pemanggilan library QR CODE
 

@@ -19,11 +19,12 @@ class Sertifikat extends CI_Controller {
             $peserta['nama'] = $peserta['nama'];
             $peserta['title'] = "Sertifikat ".$peserta['nama'];
             $peserta['t4_lahir'] = ucwords(strtolower($peserta['t4_lahir']));
-            $peserta['tahun'] = date('Y', strtotime($tes['tgl_tes']));
-            $peserta['bulan'] = getRomawi(date('m', strtotime($tes['tgl_tes'])));
-            $peserta['istima'] = poin("Listening", $peserta['nilai_listening']);
-            $peserta['tarakib'] = poin("Structure", $peserta['nilai_structure']);
-            $peserta['qiroah'] = poin("Reading", $peserta['nilai_reading']);
+            $peserta['hari'] = date('d', strtotime($tes['tgl_tes']));
+            $peserta['tahun'] = date('y', strtotime($tes['tgl_tes']));
+            $peserta['bulan'] = getHurufBulan(date('m', strtotime($tes['tgl_tes'])));
+            $peserta['listening'] = poin("Listening", $peserta['nilai_listening']);
+            $peserta['structure'] = poin("Structure", $peserta['nilai_structure']);
+            $peserta['reading'] = poin("Reading", $peserta['nilai_reading']);
             $peserta['tgl_tes'] = $tes['tgl_tes'];
             $peserta['tgl_berakhir'] = date('Y-m-d', strtotime('+1 year', strtotime($tes['tgl_tes'])));
 
@@ -32,8 +33,7 @@ class Sertifikat extends CI_Controller {
             $skor = ((poin("Listening", $peserta['nilai_listening']) + poin("Structure", $peserta['nilai_structure']) + poin("Reading", $peserta['nilai_reading'])) * 10) / 3;
             $peserta['skor'] = $skor;
 
-            // $peserta['no_doc'] = "{$peserta['no_doc']}/TOAFL/ACP/{$peserta['bulan']}/{$peserta['tahun']}";
-            $peserta['no_doc'] = "{$peserta['no_doc']}/{$peserta['bulan']}/{$peserta['tahun']}";
+            $peserta['no_doc'] = "T.{$peserta['no_doc']}{$peserta['hari']}{$peserta['bulan']}{$peserta['tahun']}";
         }
 
         // $this->load->view("pages/layout/header-sertifikat", $peserta);
