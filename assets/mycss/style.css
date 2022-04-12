@@ -16,3 +16,14 @@ body {
 	transform-origin: 50% 50%;
 	transform: rotate(0) translate(0,0);
 }
+
+.table table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+.form-inline {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+}

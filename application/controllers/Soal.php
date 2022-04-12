@@ -139,6 +139,14 @@ class Soal extends CI_Controller {
 
     }
 
+    public function ielts(){
+        $data['title'] = "Soal IELTS";
+        $data['link'] = $this->Main_model->get_one("config", ['field' => "web admin"]);
+        $data['background'] = $this->Main_model->get_one("config", ["field" => 'background']);
+
+        $this->load->view("pages/soal-ielts", $data);
+    }
+
     public function email_check($table){
         // $id_tes = $this->input->post("id");
         // $email = $this->input->post("email");
