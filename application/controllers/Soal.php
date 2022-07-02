@@ -108,6 +108,8 @@ class Soal extends CI_Controller {
                         $data['sesi'][$i]['soal'][$j]['data']['pilihan'] = $txt_soal['pilihan'];
                         $data['sesi'][$i]['soal'][$j]['data']['jawaban'] = $txt_soal['jawaban'];
                         $data['sesi'][$i]['soal'][$j]['penulisan'] = $soal['penulisan'];
+                        $data['sesi'][$i]['soal'][$j]['id_text'] = $soal['id_text'];
+                        $data['sesi'][$i]['soal'][$j]['tampil'] = $soal['tampil'];
                         
                         $number++;
 
@@ -194,7 +196,10 @@ class Soal extends CI_Controller {
                 $txt_soal = json_decode($string, true );
 
                 $sub_soal = $txt_soal['jawaban'];
-                if($sub_soal == $jawaban[$j]){
+                $jawaban_soal = $jawaban[$j];
+                $jawaban_soal = str_replace('"', "&quot;", $jawaban_soal);
+
+                if($sub_soal == $jawaban_soal){
                     $status = "benar";
                     $benar++;
                 } else {
@@ -202,7 +207,7 @@ class Soal extends CI_Controller {
                     $salah++;
                 }
                 $no = $j+1;
-                $text .= '['.$i.','.$no.',"'.$jawaban[$j].'","'.$status.'"],';
+                $text .= '['.$i.','.$no.',"'.$jawaban_soal.'","'.$status.'"],';
             }
 
             if($i == 1){
@@ -268,6 +273,9 @@ class Soal extends CI_Controller {
             '$tgl_tes' => tgl_indo($tes["tgl_tes"], "lengkap"),
             '$tgl_pengumuman' => tgl_indo($tes["tgl_pengumuman"], "lengkap"),
             '$link' => "<a target='_blank' href='https://wa.me/+".$config[3]['value']."?text=Hi%20admin%2C%20saya%20ingin%20mengambil%20sertifikat%20hasil%20test%20TOEFL%20Prediction%20saya....%0A%0ANama%20%3A%20".$nama."%0ATanggal%20tes%20%3A%20".$tgl_tes."'>Ambil Sertifikat</a>",
+            '$pretest' => "<a target='_blank' href='https://wa.me/+".$config[5]['value']."?text=Hai%20admin%2C%20saya%20ingin%20konfirmasi%20bahwa%20saya%20sudah%20mengerjakan%20soal%20Pretest.%0A%0ANama%20%3A%20".$nama."%0ATanggal%20tes%20%3A%20".$tgl_tes."'>Konfirmasi</a>",
+            '$progress_test' => "<a target='_blank' href='https://wa.me/+".$config[6]['value']."?text=Hai%20admin%2C%20saya%20ingin%20konfirmasi%20bahwa%20saya%20sudah%20mengerjakan%20soal%20Progress%20Test.%0A%0ANama%20%3A%20".$nama."%0ATanggal%20tes%20%3A%20".$tgl_tes."'>Konfirmasi</a>",
+            '$post_test' => "<a target='_blank' href='https://wa.me/+".$config[7]['value']."?text=Hai%20admin%2C%20saya%20ingin%20konfirmasi%20bahwa%20saya%20sudah%20mengerjakan%20soal%20Post%20Test.%0A%0ANama%20%3A%20".$nama."%0ATanggal%20tes%20%3A%20".$tgl_tes."'>Konfirmasi</a>",
         );
 
         $msg = str_replace(array_keys($replacements), $replacements, $tes['msg']);

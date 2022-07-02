@@ -193,13 +193,26 @@
                                                         ';
                                             ?>
                                             <?php endif;?>
-                                            <div class="shadow card mb-3 soal">
-                                                <div class="card-body" id="soal-<?= $i?>">
-                                                    
-                                                    <?= $item?>
-                                
+                                            
+                                            <?php if($data['tampil'] == "Ya") :?>
+                                                <div class="shadow card mb-3 soal">
+                                                    <div class="card-body" id="soal-<?= $i?>">
+                                                        <?php if($data['id_text'] != 0) :?>
+                                                            <?php $text = textReading($data['id_text']) ;?>
+                                                            <div class="row">
+                                                                <div class="col-sm-12 col-lg-8">
+                                                                    <?= $text['data'];?>
+                                                                </div>
+                                                                <div class="col-sm-12 col-lg-4">
+                                                                    <?= $item?>
+                                                                </div>
+                                                            </div>
+                                                        <?php else :?>
+                                                            <?= $item;?>
+                                                        <?php endif;?>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            <?php endif;?>
                                         <?php endforeach;?>
 
                                         <div class="mb-3">

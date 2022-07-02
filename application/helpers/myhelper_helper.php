@@ -256,3 +256,12 @@
         $data = $CI->db->get()->result_array();
         return $data;
     }
+
+    function textReading($id_item){
+        $CI =& get_instance();
+
+        $CI->db->from("item_soal");
+        $CI->db->where(["id_item" => $id_item]);
+        $data = $CI->db->get()->row_array();
+        return $data;
+    }
