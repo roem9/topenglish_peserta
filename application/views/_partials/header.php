@@ -28,4 +28,4 @@
     <script src="<?= base_url()?>assets/jquery/sweetalert2@9.js"></script>
   </head>
   <!-- <body class="antialiased" style="background-color: #265D5A"> -->
-  <body class="antialiased" style="background-color: <?= $background['value']?>">
+  <body class="antialiased" style="background-color: <?= $background['value']?>" onmouseleave="showAlertWithCountdown(10)" onmouseenter="returnWorkSheet()">

@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         <div class="form-footer">
-                            <button type="button" class="btn btn-primary w-100 btnSignIn">Masuk</button>
+                            <button type="button" class="btn btn-primary w-100 btnSignIn">Log In</button>
                         </div>
                     <?php endif;?>
                 </div>
@@ -54,7 +54,7 @@
                                 <div id="sesi-0">
                                     <div class="card mb-3">
                                         <div class="card-header">
-                                            <h3 class="card-title">Data Diri</h3>
+                                            <h3 class="card-title">Personal Information</h3>
                                         </div>
                                         <div class="card-body">
                                             <?= $form?>
@@ -72,206 +72,230 @@
                                     </div>
                                 </div>
 
-                                <?php 
-                                    $index = 1;
-                                    $jumlah_sesi = COUNT($sesi);
-                                    foreach ($sesi as $sesi) :?>
-                                    <div id="sesi-<?=$index?>" style="display: none">
+                                <!-- tambahan -->
+                                <div id="worksheet">
+                                    <?php 
+                                        $index = 1;
+                                        $jumlah_sesi = COUNT($sesi);
+                                        foreach ($sesi as $sesi) :?>
+                                        <div id="sesi-<?=$index?>" style="display: none">
 
-                                        <div class="form-floating mb-3">
-                                            <select name="fontSize" class="form-control required">
-                                                <option value="">Pilih Ukuran Tulisan</option>
-                                                <option value="">Default</option>
-                                                <option value="20px">20px</option>
-                                                <option value="25px">25px</option>
-                                                <option value="30px">30px</option>
-                                            </select>
-                                            <label>Ukuran Tulisan</label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <!-- jika index = 1, tampilkan tombol back else hanya tampilkan tombol next  -->
-                                            <?php if($index == $jumlah_sesi && $jumlah_sesi != 1) :?>
-                                                <div class="d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
-                                                        </svg>
-                                                        Simpan
-                                                    </button>
-                                                </div>
-                                            <?php elseif($index == $jumlah_sesi && $jumlah_sesi == 1) :?>
-                                                <div class="d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
-                                                        </svg> 
-                                                        Back</button>
-                                                    <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
-                                                        </svg>
-                                                        Simpan
-                                                    </button>
-                                                </div>
-                                            <?php elseif($index == 1) :?>
-                                                <div class="d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
-                                                        </svg> 
-                                                        Back</button>
-                                                    <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
-                                                        Next
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            <?php else :?>
-                                                <div class="d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
-                                                        Next
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            <?php endif;?>
-                                        </div>
-                                        <input type="hidden" name="sesi-<?=$index + 1?>" value="<?= $sesi['jumlah_soal']?>">
-                                        <input type="hidden" name="kunci_sesi[]" value="<?= $sesi['id_sub']?>">
-                                        <?php foreach ($sesi['soal'] as $i => $data) :
-                                            $item = "";
-                                            ?>
-                                            <?php if($data['item'] == "soal") :?>
-                                                <?php if($data['penulisan'] == "RTL") :?>
-                                                    <?php $soal = '<div dir="rtl" class="mb-3">'.$data['data']['soal'].'</div>' ?>
-                                                    <input type="hidden" name="jawaban_sesi_<?= $index?>[]" data-id="soal-<?= $i?>" id="jawaban_sesi_<?= $index?><?= $i?>" value="null">
-                                                    <?php $pilihan = "";?>
-                                                    <?php foreach ($data['data']['pilihan'] as $k => $choice) :?>
-                                                        <?php $pilihan .= '
-                                                            <div class="mb-3">
-                                                                <div class="form-check">
-                                                                    <div class="text-right" dir="rtl">
-                                                                        <label>
-                                                                            <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
-                                                                            '.$choice.'
-                                                                        </label>
+                                            <div class="form-floating mb-3">
+                                                <select name="fontSize" class="form-control required">
+                                                    <option value="">Adjust the font size</option>
+                                                    <option value="">Default</option>
+                                                    <option value="20px">20px</option>
+                                                    <option value="25px">25px</option>
+                                                    <option value="30px">30px</option>
+                                                </select>
+                                                <label>Font Size</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <!-- jika index = 1, tampilkan tombol back else hanya tampilkan tombol next  -->
+                                                <?php if($index == $jumlah_sesi && $jumlah_sesi != 1) :?>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
+                                                            </svg>
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                <?php elseif($index == $jumlah_sesi && $jumlah_sesi == 1) :?>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
+                                                            </svg> 
+                                                            Back</button>
+                                                        <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
+                                                            </svg>
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                <?php elseif($index == 1) :?>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
+                                                            </svg> 
+                                                            Back</button>
+                                                        <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
+                                                            Next
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                <?php else :?>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
+                                                            Next
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                <?php endif;?>
+                                            </div>
+                                            <input type="hidden" name="sesi-<?=$index + 1?>" value="<?= $sesi['jumlah_soal']?>">
+                                            <input type="hidden" name="kunci_sesi[]" value="<?= $sesi['id_sub']?>">
+                                            <?php foreach ($sesi['soal'] as $i => $data) :
+                                                $item = "";
+                                                ?>
+                                                <?php if($data['item'] == "soal") :?>
+                                                    <?php if($data['penulisan'] == "RTL") :?>
+                                                        <?php $soal = '<div dir="rtl" class="mb-3">'.$data['data']['soal'].'</div>' ?>
+                                                        <input type="hidden" name="jawaban_sesi_<?= $index?>[]" data-id="soal-<?= $i?>" id="jawaban_sesi_<?= $index?><?= $i?>" value="null">
+                                                        <?php $pilihan = "";?>
+                                                        <?php foreach ($data['data']['pilihan'] as $k => $choice) :?>
+                                                            <?php $pilihan .= '
+                                                                <div class="mb-3">
+                                                                    <div class="form-check">
+                                                                        <div class="text-right" dir="rtl">
+                                                                            <label>
+                                                                                <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
+                                                                                '.$choice.'
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>' ?>
+                                                        <?php endforeach;?>
+                                                        <?php $item = $soal.$pilihan;?>
+                                                    <?php else :?>
+                                                        <?php $soal = '<div class="mb-3">'.$data['data']['soal'].'</div>' ?>
+                                                        <input type="hidden" name="jawaban_sesi_<?= $index?>[]" data-id="soal-<?= $i?>" id="jawaban_sesi_<?= $index?><?= $i?>" value="null">
+                                                        <?php $pilihan = "";?>
+                                                        <?php foreach ($data['data']['pilihan'] as $k => $choice) :?>
+                                                            <?php $pilihan .= '
+                                                                <div class="mb-3">
+                                                                    <label>
+                                                                        <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
+                                                                        '.$choice.'
+                                                                    </label>
+                                                                </div>' ?>
+                                                        <?php endforeach;?>
+                                                        <?php $item = $soal.$pilihan;?>
+                                                    <?php endif;?>
+                                                <?php elseif($data['item'] == "petunjuk") :
+                                                        if($data['penulisan'] == "RTL"){
+                                                            $item = '<div dir="rtl" class="mb-3">'.$data['data'].'</div>';
+                                                        } else {
+                                                            $item = '<div dir="ltr" class="mb-3">'.$data['data'].'</div>';
+                                                        }?>
+                                                <?php elseif($data['item'] == "audio") :
+                                                    $item = '<center>
+                                                                <audio id="audio-'.$data['id_item'].'" class="audio" data-id="'.$data['id_item'].'"><source src="'.$link['value'].'/assets/myaudio/'.$data['data'].'?t='.time().'" type="audio/mpeg"></audio>
+                                                                <progress id="seekbar-'.$data['id_item'].'" value="0" max="1" style="width:100%;"></progress><br>
+                                                                <button class="btn btn-success btnAudio" data-id="'.$data['id_item'].'" type="button">'.tablerIcon("player-play", "").' play</button>
+                                                                <p><small class="text-danger"><i>Note : the audio can only be played once</i></small></p>
+                                                            </center>
+                                                            ';
+                                                ?>
+                                                <?php endif;?>
+                                                
+                                                <?php if($data['tampil'] == "Ya") :?>
+                                                    <div class="shadow card mb-3 soal">
+                                                        <div class="card-body" id="soal-<?= $i?>">
+                                                            <?php if($data['id_text'] != 0) :?>
+                                                                <?php $text = textReading($data['id_text']) ;?>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-lg-8">
+                                                                        <?= $text['data'];?>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-lg-4">
+                                                                        <?= $item?>
                                                                     </div>
                                                                 </div>
-                                                            </div>' ?>
-                                                    <?php endforeach;?>
-                                                    <?php $item = $soal.$pilihan;?>
-                                                <?php else :?>
-                                                    <?php $soal = '<div class="mb-3">'.$data['data']['soal'].'</div>' ?>
-                                                    <input type="hidden" name="jawaban_sesi_<?= $index?>[]" data-id="soal-<?= $i?>" id="jawaban_sesi_<?= $index?><?= $i?>" value="null">
-                                                    <?php $pilihan = "";?>
-                                                    <?php foreach ($data['data']['pilihan'] as $k => $choice) :?>
-                                                        <?php $pilihan .= '
-                                                            <div class="mb-3">
-                                                                <label>
-                                                                    <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
-                                                                    '.$choice.'
-                                                                </label>
-                                                            </div>' ?>
-                                                    <?php endforeach;?>
-                                                    <?php $item = $soal.$pilihan;?>
-                                                <?php endif;?>
-                                            <?php elseif($data['item'] == "petunjuk") :
-                                                    if($data['penulisan'] == "RTL"){
-                                                        $item = '<div dir="rtl" class="mb-3">'.$data['data'].'</div>';
-                                                    } else {
-                                                        $item = '<div dir="ltr" class="mb-3">'.$data['data'].'</div>';
-                                                    }?>
-                                            <?php elseif($data['item'] == "audio") :
-                                                $item = '<center>
-                                                            <audio id="audio-'.$data['id_item'].'" class="audio" data-id="'.$data['id_item'].'"><source src="'.$link['value'].'/assets/myaudio/'.$data['data'].'?t='.time().'" type="audio/mpeg"></audio>
-                                                            <progress id="seekbar-'.$data['id_item'].'" value="0" max="1" style="width:100%;"></progress><br>
-                                                            <button class="btn btn-success btnAudio" data-id="'.$data['id_item'].'" type="button">'.tablerIcon("player-play", "").' play</button>
-                                                            <p><small class="text-danger"><i>note : perhatian, audio hanya dapat diputar satu kali</i></small></p>
-                                                        </center>
-                                                        ';
-                                            ?>
-                                            <?php endif;?>
-                                            
-                                            <?php if($data['tampil'] == "Ya") :?>
-                                                <div class="shadow card mb-3 soal">
-                                                    <div class="card-body" id="soal-<?= $i?>">
-                                                        <?php if($data['id_text'] != 0) :?>
-                                                            <?php $text = textReading($data['id_text']) ;?>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 col-lg-8">
-                                                                    <?= $text['data'];?>
-                                                                </div>
-                                                                <div class="col-sm-12 col-lg-4">
-                                                                    <?= $item?>
-                                                                </div>
-                                                            </div>
-                                                        <?php else :?>
-                                                            <?= $item;?>
-                                                        <?php endif;?>
+                                                            <?php else :?>
+                                                                <?= $item;?>
+                                                            <?php endif;?>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            <?php endif;?>
-                                        <?php endforeach;?>
+                                                <?php endif;?>
+                                            <?php endforeach;?>
 
-                                        <div class="mb-3">
-                                            <!-- jika index = 1, tampilkan tombol back else hanya tampilkan tombol next  -->
-                                            <?php if($index == $jumlah_sesi && $jumlah_sesi != 1) :?>
-                                                <div class="d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
-                                                        </svg>
-                                                        Simpan
-                                                    </button>
-                                                </div>
-                                            <?php elseif($index == $jumlah_sesi && $jumlah_sesi == 1) :?>
-                                                <div class="d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
-                                                        </svg> 
-                                                        Back</button>
-                                                    <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
-                                                        </svg>
-                                                        Simpan
-                                                    </button>
-                                                </div>
-                                            <?php elseif($index == 1) :?>
-                                                <div class="d-flex justify-content-between">
-                                                    <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
-                                                        </svg> 
-                                                        Back</button>
-                                                    <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
-                                                        Next
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            <?php else :?>
-                                                <div class="d-flex justify-content-end">
-                                                    <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
-                                                        Next
-                                                        <svg width="20" height="20">
-                                                            <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            <?php endif;?>
+                                            <div class="mb-3">
+                                                <!-- jika index = 1, tampilkan tombol back else hanya tampilkan tombol next  -->
+                                                <?php if($index == $jumlah_sesi && $jumlah_sesi != 1) :?>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
+                                                            </svg>
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                <?php elseif($index == $jumlah_sesi && $jumlah_sesi == 1) :?>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
+                                                            </svg> 
+                                                            Back</button>
+                                                        <button type="button" class="btn btn-md btn-primary btnSimpan" data-id="sesi-<?= $index + 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-device-floppy" />
+                                                            </svg>
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                <?php elseif($index == 1) :?>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" class="btn btn-md btn-success btnBack" data-id="sesi-<?= $index - 1?>">
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-left" />
+                                                            </svg> 
+                                                            Back</button>
+                                                        <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
+                                                            Next
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                <?php else :?>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" class="btn btn-md btn-success btnNext" data-id="sesi-<?= $index + 1?>">
+                                                            Next
+                                                            <svg width="20" height="20">
+                                                                <use xlink:href="<?= base_url()?>assets/tabler-icons-1.39.1/tabler-sprite.svg#tabler-arrow-narrow-right" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                <?php endif;?>
+                                            </div>
+
                                         </div>
-
-                                    </div>
-                                <?php 
-                                    $index++;
-                                    endforeach;?>
+                                    <?php 
+                                        $index++;
+                                        endforeach;?>
+                                </div>
 
                             </form>
+
+                            <!-- tambahan  -->
+                            <div class="modal modal-blur fade bg-danger" id="alertModal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Alert</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Leaving the worksheet is not allowed. You'll lose your progress and your test result will be unvalid</p>
+                                            <p>You will lose your progress in <span id="count">10</span> seconds</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" class="btn me-auto mr-3 btn-primary" data-bs-dismiss="modal">Stay on the Worksheet</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -293,6 +317,9 @@
 <?php $this->load->view("_partials/footer")?>
 
 <script>
+    // tambahan 
+    let start = false;
+
     $('.audio').on('timeupdate', function() {
         let id = $(this).data("id");
         $('#seekbar-'+id).attr("value", this.currentTime / this.duration);
@@ -331,7 +358,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: '',
-                        text: 'Berhasil masuk',
+                        text: 'Success!',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -341,7 +368,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Password yang Anda masukkan salah'
+                        text: 'Invalid password. Try again.'
                     })
                 }
             }
@@ -372,7 +399,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Lengkapi data terlebih dahulu. Harap inputkan email yang valid',
+                    text: 'Please complete all of the fields and input valid e-mail address. ',
                 })
             } else {
                 let table = "<?= $table?>";
@@ -393,18 +420,21 @@
                             if(click == false) {
                                 Swal.fire({
                                     icon: 'question',
-                                    html: 'Mulai mengerjakan soal?',
+                                    html: 'Start the session now?',
                                     showCloseButton: true,
                                     showCancelButton: true,
-                                    confirmButtonText: 'Ya',
-                                    cancelButtonText: 'Tidak'
+                                    confirmButtonText: 'Yes',
+                                    cancelButtonText: 'No'
                                 }).then(function (result) {
                                     if (result.value) {
                                         // hide all id 
-                                        $("div[id^='sesi-'").hide();
+                                        $("div[id^='sesi-']").hide();
                                         // show sesi 
                                         $("#"+id).show();
                                         
+                                        // tambahan 
+                                        start = true;
+
                                         // scroll to top 
                                         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
                                             $([document.documentElement, document.body]).animate({
@@ -418,7 +448,7 @@
                                 })
                             } else {
                                 // hide all id 
-                                $("div[id^='sesi-'").hide();
+                                $("div[id^='sesi-']").hide();
                                 // show sesi 
                                 $("#"+id).show();
                                 
@@ -455,11 +485,11 @@
                 if(id == 'sesi-2'){
                     Swal.fire({
                         icon: 'question',
-                        html: 'Anda belum menyelesaikan soal pada sesi ini, Yakin akan pindah ke sesi selanjutnya?<br><small style="font-size: 0.70em" class="form-text text-danger">Anda tidak akan bisa kembali ke sesi ini</small>',
+                        html: `You haven't submitted your answer. Are you sure you want to move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>`,
                         showCloseButton: true,
                         showCancelButton: true,
-                        confirmButtonText: 'Ya',
-                        cancelButtonText: 'Tidak'
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No'
                     }).then(function (result) {
                         if (result.value) {
                             if(typeof countDown != 'undefined'){
@@ -488,7 +518,7 @@
                             }, 1000);
 
                             // hide all id 
-                            $("div[id^='sesi-'").hide();
+                            $("div[id^='sesi-']").hide();
                             // show sesi 
                             $("#"+id).show();
                             
@@ -504,13 +534,13 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Anda belum menyelesaikan soal pada sesi ini',
+                        text: 'You haven’t submitted your answer in this session',
                     })
                 }
             } else {
                 Swal.fire({
                     icon: 'question',
-                    html: 'Yakin akan pindah ke sesi selanjutnya?<br><small style="font-size: 0.70em" class="form-text text-danger">Anda tidak akan bisa kembali ke sesi ini</small>',
+                    html: 'Move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>',
                     showCloseButton: true,
                     showCancelButton: true,
                     confirmButtonText: 'Ya',
@@ -543,7 +573,7 @@
                         }, 1000);
 
                         // hide all id 
-                        $("div[id^='sesi-'").hide();
+                        $("div[id^='sesi-']").hide();
                         // show sesi 
                         $("#"+id).show();
                         
@@ -561,7 +591,7 @@
     
     $(".btnBack").click(function(){
         let id = $(this).data("id");
-        $("div[id^='sesi-'").hide();
+        $("div[id^='sesi-']").hide();
         $("#"+id).show();
     })
 
@@ -586,20 +616,20 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Anda belum menyelesaikan soal pada sesi ini',
+                text: 'You haven’t submitted your answer in this session',
             })
         } else {
             Swal.fire({
                 icon: 'question',
-                html: 'Yakin telah menyelesaikan tes Anda?',
+                html: 'Finish the test?',
                 showCloseButton: true,
                 showCancelButton: true,
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
             }).then(function (result) {
                 if (result.value) {
                     swal.fire({
-                        html: '<h4>Menyimpan Jawaban Anda ...</h4>',
+                        html: '<h4>Saving your answer ...</h4>',
                         allowOutsideClick: false,
                         showConfirmButton: false,
                         onBeforeOpen: () => {
@@ -607,7 +637,7 @@
                         },
                     });
 
-                    $(".btnSimpan").html("Menyimpan...");
+                    $(".btnSimpan").html("Saving...");
                     $(".btnSimpan").prop("disabled", true);
                     $(".btnBack").prop("disabled", true);
                     $("#formSoal").submit()
@@ -648,7 +678,7 @@
                     }
 
                     // hide all id 
-                    $("div[id^='sesi-'").hide();
+                    $("div[id^='sesi-']").hide();
                     // show sesi 
                     $("#sesi-3").show();
 
@@ -670,7 +700,7 @@
 
                 swal.fire({
                     title: 'Waktu Anda Telah Habis',
-                    html: '<h4>Menyimpan Jawaban Anda ...</h4>',
+                    html: '<h4>Saving your answer ...</h4>',
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     onBeforeOpen: () => {
@@ -678,7 +708,7 @@
                     },
                 });
 
-                $(".btnSimpan").html("Menyimpan...");
+                $(".btnSimpan").html("Saving...");
                 $(".btnSimpan").prop("disabled", true);
                 $(".btnBack").prop("disabled", true);
                 $("#formSoal").submit()
@@ -701,4 +731,31 @@
             }  
         }  
     }, true);
+
+    // tambahan 
+    let countdownInterval;
+
+    function showAlertWithCountdown(seconds) {
+        if(start){
+            clearInterval(countdownInterval);
+            $("#count").html(`<b>10</b>`);
+            $("#alertModal").modal('show');
+            countdownInterval = setInterval(() => {
+                $("#count").html(`<b>${seconds}</b>`);
+                seconds--;
+    
+                if(seconds === 0){
+                    clearInterval(countdownInterval);
+                    location.reload();
+                }
+            }, 1000);
+        }
+    }
+
+    function returnWorkSheet() {
+        if(start){
+            $("#alertModal").modal('hide');
+            clearInterval(countdownInterval);
+        }
+    }
 </script>

@@ -307,7 +307,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: '',
-                        text: 'Berhasil masuk',
+                        text: 'Success',
                         showConfirmButton: false,
                         timer: 1500
                     })
@@ -317,7 +317,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Password yang Anda masukkan salah'
+                        text: 'Invalid password. Try again.'
                     })
                 }
             }

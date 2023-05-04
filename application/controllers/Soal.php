@@ -35,15 +35,15 @@ class Soal extends CI_Controller {
                 $data['form'] = "
                     <div class=\"form-floating mb-3\">
                         <input type=\"text\" name=\"email\" class=\"form form-control required\">
-                        <label for=\"email\">Alamat Email</label>
+                        <label for=\"email\">Email</label>
                     </div>
                     <div class=\"form-floating mb-3\">
                         <input type=\"text\" name=\"nama\" class=\"form form-control required\">
-                        <label for=\"nama\">Nama Lengkap</label>
+                        <label for=\"nama\">Full Name</label>
                     </div>
                     <div class=\"form-floating mb-3\">
                         <select name=\"jk\" class=\"form form-control required\">
-                            <option value=\"\">Pilih Gender</option>
+                            <option value=\"\">Choose Gender</option>
                             <option value=\"Male\">Male</option>
                             <option value=\"Female\">Female</option>
                         </select>
@@ -51,19 +51,19 @@ class Soal extends CI_Controller {
                     </div>
                     <div class=\"form-floating mb-3\">
                         <input type=\"text\" name=\"no_wa\" class=\"form form-control required number\">
-                        <label for=\"no_wa\">No Whatsapp</label>
+                        <label for=\"no_wa\">Whatsapp Number</label>
                     </div>
                     <div class=\"form-floating mb-3\">
                         <input type=\"text\" name=\"t4_lahir\" class=\"form form-control required\">
-                        <label for=\"t4_lahir\">Kota Lahir</label>
+                        <label for=\"t4_lahir\">Place Of Birth</label>
                     </div>
                     <div class=\"form-floating mb-3\">
                         <input type=\"date\" name=\"tgl_lahir\" class=\"form form-control required\">
-                        <label for=\"tgl_lahir\">Tgl Lahir</label>
+                        <label for=\"tgl_lahir\">Date Of Birth</label>
                     </div>
                     <div class=\"form-floating mb-3\">
                         <textarea name=\"alamat\" class=\"form form-control required\"></textarea>
-                        <label for=\"alamat\">Alamat</label>
+                        <label for=\"alamat\">Address</label>
                     </div>
                 ";
             } else {
