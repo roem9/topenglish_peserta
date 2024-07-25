@@ -156,7 +156,7 @@
                                                                     <div class="form-check">
                                                                         <div class="text-right" dir="rtl">
                                                                             <label>
-                                                                                <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
+                                                                                <input type="radio" data-jawaban="jawaban_sesi_'.$index.''.$i.'" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
                                                                                 '.$choice.'
                                                                             </label>
                                                                         </div>
@@ -172,7 +172,7 @@
                                                             <?php $pilihan .= '
                                                                 <div class="mb-3">
                                                                     <label>
-                                                                        <input type="radio" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
+                                                                        <input type="radio" data-jawaban="jawaban_sesi_'.$index.''.$i.'" data-id="'.$index.'|'.$i.'"  name="radio-'.$index.'['.$i.']" value="'.$choice.'"> 
                                                                         '.$choice.'
                                                                     </label>
                                                                 </div>' ?>
@@ -320,141 +320,378 @@
     // tambahan 
     let start = false;
 
-    $(document).mouseleave(function () {
-        showAlertWithCountdown(10)
-    });
+    // localStorage
+    var audioArray = [];
 
-    $(document).mouseenter(function () {
-        returnWorkSheet()
-    });
+    $(document).ready(function() {
+        
+        // localStorage digunakan untuk menghitung lama peserta meninggalkan page
+        let now = new Date();
+        let hours = now.getHours() * 60 * 60;
+        let minutes = now.getMinutes() * 60;
+        let seconds = now.getSeconds();
+        let totalTime = parseInt(hours + minutes + seconds);
 
-    $('.audio').on('timeupdate', function() {
-        let id = $(this).data("id");
-        $('#seekbar-'+id).attr("value", this.currentTime / this.duration);
-    });
+        if(totalTime - localStorage.getItem('currentTime') >=  <?= $time_reload['value']?>){
+            localStorage.clear();
+        }
+        // localStorage digunakan untuk menghitung lama peserta meninggalkan page
 
-    $("#hidePassword").hide();
+
+        // localStorage menghitung waktu sekarang
+        if (!localStorage.getItem('currentTime')) {
+            updateTimeInLocalStorage();
+        }
+        
+        setInterval(updateTimeInLocalStorage, 1000);
+        // localStorage menghitung waktu sekarang
+
+        // localStorage jumlah reload dan proses yang terjadi ketika reload
+        let reloadCount = localStorage.getItem('reload');
     
-    $("#showPassword").click(function(){
-        $("input[name='password']").prop('type', 'text');
-        $("#showPassword").hide();
-        $("#hidePassword").show()
-    })
+        if (reloadCount === null) {
+            // Jika tidak ada nilai localStorage reload, atur ke 3
+            localStorage.setItem('reload', <?= $reload_page['value']?>);
+        } else {
+            if(localStorage.getItem('sesi')){
+                // Jika ada nilai localStorage reload, kurangi 1
+                reloadCount = parseInt(reloadCount);
+                localStorage.setItem('reload', reloadCount - 1);
+            }
+
+            // Hapus localStorage jika reload = 0
+            if (localStorage.getItem('reload') < 0) {
+                localStorage.clear();
+                localStorage.setItem('reload', <?= $reload_page['value']?>);
+            }
+        }
+        // localStorage jumlah reload dan proses yang terjadi ketika reload
+        
+        // localStorage jika data sudah berhasil diinput maka lakukan clear storage
+        <?php if( $this->session->flashdata('pesan') ) : ?>
+            localStorage.clear();
+        <?php endif;?>
+        // localStorage jika data sudah berhasil diinput maka lakukan clear storage
+
+        // localStorage untuk menyimpan semua hasil input
+        $('form input, form select, form textarea').on('input change', function() {
+            // Simpan nilai elemen ke localStorage
+            localStorage.setItem($(this).attr('name'), $(this).val());
+        });
+        // localStorage untuk menyimpan semua hasil input
+
+        // localStorage untuk mengambil semua hasil input
+        $('form input:not([type="radio"]), form select, form textarea').each(function() {
+            // Ambil nilai dari localStorage berdasarkan id elemen
+            const storedValue = localStorage.getItem($(this).attr('name'));
+            if (storedValue !== null) {
+                // Setel nilai elemen dari localStorage jika ada
+                $(this).val(storedValue);
+            }
+        });
+        // localStorage untuk mengambil semua hasil input
+
+        // localStorage untuk mengambil semua hasil input jawaban
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            
+            // Periksa apakah kunci mengandung kata 'jawaban_sesi_'
+            if (key.includes('jawaban_sesi_')) {
+                const value = localStorage.getItem(key);
+                
+                // Temukan elemen form yang sesuai dengan kunci (name attribute)
+                // Misalnya, jika key adalah 'jawaban_sesi_1', maka cari elemen dengan name='jawaban_sesi_1[]'
+                // atau sesuaikan dengan struktur name attribute Anda
+                const $element = $(`[id="${key}"]`);
+                
+                // Periksa apakah elemen ditemukan
+                if ($element.length > 0) {
+                    // Setel nilai elemen form dari localStorage
+                    $element.val(value);
+
+                    var radios = $(`[data-jawaban="${key}"]`) // list of radio buttons
+                    for(var r=0;r<radios.length;r++){
+                        if(radios[r].value == value){
+                            radios[r].checked = true; // marking the required radio as checked
+                        }
+                    }
+
+                }
+            }
+        }
+        // localStorage untuk mengambil semua hasil input jawaban
+
+        // localStorage mengatur semua yang terjadi jika terset localStorage item
+        if(localStorage.getItem('sesi')){
+            let id = localStorage.getItem('sesi');
+            start = true;
+
+            $("#login").hide();
+            $("#soal_tes").show();
+            
+            // hide all id 
+            $("div[id^='sesi-']").hide();
+            // show sesi 
+            $("#"+id).show();
+
+            // audio 
+            if(localStorage.getItem('audioArray') && localStorage.getItem('audioTime')){
+
+                // Retrieve the array from localStorage
+                const storedAudioArray = localStorage.getItem('audioArray');
     
-    $("#hidePassword").click(function(){
-        $("input[name='password']").prop('type', 'password');
-        $("#showPassword").show();
-        $("#hidePassword").hide()
-    })
+                // Parse the JSON string back into a JavaScript array
+                const storedAudio = JSON.parse(storedAudioArray) || []; // Initialize as empty array if no data found
+    
+                audioArray = storedAudio;
+    
+                // Get the last item from the array
+                const lastItem = storedAudio[storedAudio.length - 1];
+    
+                storedAudio.forEach(audio => {
+                    if(audio != lastItem){
+                        $(`button[data-id="${audio}"]`).hide();
+                    }
+                });
+    
+                const audioElement = $('#audio-'+lastItem)[0]; // Select audio element by ID
+    
+                const audioTime = localStorage.getItem('audioTime');
+                audioElement.currentTime = audioTime;
+            }
 
-    $("select[name='fontSize']").change(function(){
-        let size = $(this).val();
-        $(".soal").css("font-size",size);
-        $(this).val(size)
-    })
 
-    $(".btnSignIn").click(function(){
-        let id_tes = $("input[name='id_tes']").val();
-        let password = $("input[name='password']").val();
+            if(id != 'sesi-1'){
+                sec = localStorage.getItem('time');
+                countDiv = document.getElementById("waktu"),
+                secpass,
+                countDown = setInterval(function () {
+                    'use strict';
+                    secpass(id);
+                }, 1000);
+            }
+        }
+        // localStorage mengatur semua yang terjadi jika terset localStorage item
 
-        $.ajax({
-            url: "<?= base_url()?>soal/password_check",
-            method: "POST",
-            data: {id:id_tes, password:password},
-            success: function(result){
-                if(result){
-                    Swal.fire({
-                        icon: 'success',
-                        title: '',
-                        text: 'Success!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
-                    $("#login").hide();
-                    $("#soal_tes").show();
-                } else {
+        $('.audio').on('timeupdate', function() {
+            let id = $(this).data("id");
+            $('#seekbar-'+id).attr("value", this.currentTime / this.duration);
+
+            localStorage.setItem('audioTime', this.currentTime);
+        });
+
+        $("#hidePassword").hide();
+        
+        $("#showPassword").click(function(){
+            $("input[name='password']").prop('type', 'text');
+            $("#showPassword").hide();
+            $("#hidePassword").show()
+        })
+        
+        $("#hidePassword").click(function(){
+            $("input[name='password']").prop('type', 'password');
+            $("#showPassword").show();
+            $("#hidePassword").hide()
+        })
+
+        $("select[name='fontSize']").change(function(){
+            let size = $(this).val();
+            $(".soal").css("font-size",size);
+            $(this).val(size)
+        })
+
+        $(".btnSignIn").click(function(){
+            let id_tes = $("input[name='id_tes']").val();
+            let password = $("input[name='password']").val();
+
+            $.ajax({
+                url: "<?= base_url()?>soal/password_check",
+                method: "POST",
+                data: {id:id_tes, password:password},
+                success: function(result){
+                    if(result){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '',
+                            text: 'Success!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        $("#login").hide();
+                        $("#soal_tes").show();
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Invalid password. Try again.'
+                        })
+                    }
+                }
+            })
+        })
+
+        $(".btnAudio").click(function(){
+            id = $(this).data("id");
+            $("#audio-"+id)[0].play();
+            $(this).hide();
+
+            // localStorage mengatur audio
+            audioArray.push(id)
+            const arrayString = JSON.stringify(audioArray);
+            localStorage.setItem('audioArray', arrayString);
+            // localStorage mengatur audio
+        })
+
+        var click = false;
+        $(".btnNext").click(function(){
+            let id = $(this).data("id");
+
+            if(id == "sesi-1"){
+
+                let form = "#sesi-0";
+
+                let email = $(form+" [name='email']").val();
+                let id_tes = "<?= $id?>"
+
+                
+                let eror = required(form);
+                
+                if(eror == 1){
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Invalid password. Try again.'
+                        text: 'Please complete all of the fields and input valid e-mail address. ',
                     })
-                }
-            }
-        })
-    })
-
-    $(".btnAudio").click(function(){
-        id = $(this).data("id");
-        $("#audio-"+id)[0].play();
-        $(this).hide();
-    })
-
-    var click = false;
-    $(".btnNext").click(function(){
-        let id = $(this).data("id");
-
-        if(id == "sesi-1"){
-
-            let form = "#sesi-0";
-
-            let email = $(form+" [name='email']").val();
-            let id_tes = "<?= $id?>"
-
-            
-            let eror = required(form);
-            
-            if(eror == 1){
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please complete all of the fields and input valid e-mail address. ',
-                })
-            } else {
-                let table = "<?= $table?>";
-                
-                $.ajax({
-                    url: "<?= base_url()?>soal/email_check/"+table,
-                    data: {email:email, id:id_tes},
-                    dataType: "JSON",
-                    method: "POST",
-                    success: function(result){
-                        if(result) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Maaf email Anda telah digunakan',
-                            })
-                        } else {
-                            if(click == false) {
+                } else {
+                    let table = "<?= $table?>";
+                    
+                    $.ajax({
+                        url: "<?= base_url()?>soal/email_check/"+table,
+                        data: {email:email, id:id_tes},
+                        dataType: "JSON",
+                        method: "POST",
+                        success: function(result){
+                            if(result) {
                                 Swal.fire({
-                                    icon: 'question',
-                                    html: 'Start the session now?',
-                                    showCloseButton: true,
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Yes',
-                                    cancelButtonText: 'No'
-                                }).then(function (result) {
-                                    if (result.value) {
-                                        // hide all id 
-                                        $("div[id^='sesi-']").hide();
-                                        // show sesi 
-                                        $("#"+id).show();
-                                        
-                                        // tambahan 
-                                        start = true;
-
-                                        // scroll to top 
-                                        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                                            $([document.documentElement, document.body]).animate({
-                                                scrollTop: $("#elementtoScrollToID").offset().top
-                                            }, 1000);
-                                        }
-
-                                    } else {
-                                        return;
-                                    }
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Maaf email Anda telah digunakan',
                                 })
                             } else {
+                                if(click == false) {
+                                    Swal.fire({
+                                        icon: 'question',
+                                        html: 'Start the session now?',
+                                        showCloseButton: true,
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Yes',
+                                        cancelButtonText: 'No'
+                                    }).then(function (result) {
+                                        if (result.value) {
+                                            // hide all id 
+                                            $("div[id^='sesi-']").hide();
+                                            // show sesi 
+                                            $("#"+id).show();
+                                            
+                                            // tambahan 
+                                            start = true;
+                                            
+                                            // localStorage menympan data sesi
+                                            localStorage.setItem('sesi', id);
+                                            // localStorage menympan data sesi
+
+                                            // scroll to top 
+                                            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                                                $([document.documentElement, document.body]).animate({
+                                                    scrollTop: $("#elementtoScrollToID").offset().top
+                                                }, 1000);
+                                            }
+
+                                        } else {
+                                            return;
+                                        }
+                                    })
+                                } else {
+                                    // hide all id 
+                                    $("div[id^='sesi-']").hide();
+                                    // show sesi 
+                                    $("#"+id).show();
+                                    
+                                    // scroll to top 
+                                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                                        $([document.documentElement, document.body]).animate({
+                                            scrollTop: $("#elementtoScrollToID").offset().top
+                                        }, 1000);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+                
+            } else {
+
+                jumlah_soal = $("[name='"+id+"']").val();
+
+                sesi = id.replace("sesi-", "");
+                sesi = parseInt(sesi-1);
+
+                if($('#sesi-'+sesi+' input:radio:checked').length != jumlah_soal){
+                
+                    $.each($("#sesi-"+sesi+" [name='jawaban_sesi_"+sesi+"[]']"), function(){
+                        index = $(this).data("id");
+                        $("#sesi-"+sesi+" #"+index).removeClass("list-group-item-danger")
+
+                        if($(this).val() == "null"){
+                            $("#sesi-"+sesi+" #"+index).addClass("list-group-item-danger")
+                        }
+                    })
+
+                    if(id == 'sesi-2'){
+                        Swal.fire({
+                            icon: 'question',
+                            html: `You haven't submitted your answer. Are you sure you want to move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>`,
+                            showCloseButton: true,
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes',
+                            cancelButtonText: 'No'
+                        }).then(function (result) {
+                            if (result.value) {
+                                if(typeof countDown != 'undefined'){
+                                    clearInterval(countDown);
+                                }
+
+                                if(id == 'sesi-2'){
+                                    
+                                    var audios = document.getElementsByTagName('audio');  
+                                    for(var i = 0, len = audios.length; i < len;i++){  
+                                        if(audios[i]){  
+                                            audios[i].pause();  
+                                        }  
+                                    }
+
+                                    // sec = 25 * 1;
+                                    sec = 25 * 60;
+
+                                    // localStorage menympan data sesi
+                                    localStorage.setItem('sesi', id);
+                                    // localStorage menympan data sesi
+                                } else if(id == 'sesi-3'){
+                                    // sec = 55 * 1;
+                                    sec = 55 * 60;
+
+                                    // localStorage menympan data sesi
+                                    localStorage.setItem('sesi', id);
+                                    // localStorage menympan data sesi
+                                }
+
+                                countDiv = document.getElementById("waktu"),
+                                secpass,
+                                countDown = setInterval(function () {
+                                    'use strict';
+                                    secpass(id);
+                                }, 1000);
+
                                 // hide all id 
                                 $("div[id^='sesi-']").hide();
                                 // show sesi 
@@ -467,37 +704,22 @@
                                     }, 1000);
                                 }
                             }
-                        }
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'You haven’t submitted your answer in this session',
+                        })
                     }
-                })
-            }
-            
-        } else {
-
-            jumlah_soal = $("[name='"+id+"']").val();
-
-            sesi = id.replace("sesi-", "");
-            sesi = parseInt(sesi-1);
-
-            if($('#sesi-'+sesi+' input:radio:checked').length != jumlah_soal){
-            
-                $.each($("#sesi-"+sesi+" [name='jawaban_sesi_"+sesi+"[]']"), function(){
-                    index = $(this).data("id");
-                    $("#sesi-"+sesi+" #"+index).removeClass("list-group-item-danger")
-
-                    if($(this).val() == "null"){
-                        $("#sesi-"+sesi+" #"+index).addClass("list-group-item-danger")
-                    }
-                })
-
-                if(id == 'sesi-2'){
+                } else {
                     Swal.fire({
                         icon: 'question',
-                        html: `You haven't submitted your answer. Are you sure you want to move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>`,
+                        html: 'Move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>',
                         showCloseButton: true,
                         showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No'
+                        confirmButtonText: 'Ya',
+                        cancelButtonText: 'Tidak'
                     }).then(function (result) {
                         if (result.value) {
                             if(typeof countDown != 'undefined'){
@@ -513,10 +735,16 @@
                                     }  
                                 }
 
+                                // sec = 25 * 1;
                                 sec = 25 * 60;
                             } else if(id == 'sesi-3'){
+                                // sec = 55 * 1;
                                 sec = 55 * 60;
                             }
+
+                            // localStorage menympan data sesi
+                            localStorage.setItem('sesi', id);
+                            // localStorage menympan data sesi
 
                             countDiv = document.getElementById("waktu"),
                             secpass,
@@ -538,121 +766,84 @@
                             }
                         }
                     })
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'You haven’t submitted your answer in this session',
-                    })
                 }
+            }
+        })
+        
+        $(".btnBack").click(function(){
+            let id = $(this).data("id");
+            $("div[id^='sesi-']").hide();
+            $("#"+id).show();
+        })
+
+        $(".btnSimpan").click(function(){
+            let id = $(this).data("id");
+            jumlah_soal = $("[name='"+id+"']").val();
+
+            sesi = id.replace("sesi-", "");
+            sesi = parseInt(sesi-1);
+
+            if($('#sesi-'+sesi+' input:radio:checked').length != jumlah_soal){
+            
+                $.each($("#sesi-"+sesi+" [name='jawaban_sesi_"+sesi+"[]']"), function(){
+                    index = $(this).data("id");
+                    $("#sesi-"+sesi+" #"+index).removeClass("list-group-item-danger")
+
+                    if($(this).val() == "null"){
+                        $("#sesi-"+sesi+" #"+index).addClass("list-group-item-danger")
+                    }
+                })
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'You haven’t submitted your answer in this session',
+                })
             } else {
                 Swal.fire({
                     icon: 'question',
-                    html: 'Move to the next session?<br><small style="font-size: 0.70em" class="form-text text-danger">You will not be able to return to this session</small>',
+                    html: 'Finish the test?',
                     showCloseButton: true,
                     showCancelButton: true,
-                    confirmButtonText: 'Ya',
-                    cancelButtonText: 'Tidak'
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
                 }).then(function (result) {
                     if (result.value) {
-                        if(typeof countDown != 'undefined'){
-                            clearInterval(countDown);
-                        }
+                        swal.fire({
+                            html: '<h4>Saving your answer ...</h4>',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            onBeforeOpen: () => {
+                                Swal.showLoading()
+                            },
+                        });
 
-                        if(id == 'sesi-2'){
-                            
-                            var audios = document.getElementsByTagName('audio');  
-                            for(var i = 0, len = audios.length; i < len;i++){  
-                                if(audios[i]){  
-                                    audios[i].pause();  
-                                }  
-                            }
-
-                            sec = 25 * 60;
-                        } else if(id == 'sesi-3'){
-                            sec = 55 * 60;
-                        }
-
-                        countDiv = document.getElementById("waktu"),
-                        secpass,
-                        countDown = setInterval(function () {
-                            'use strict';
-                            secpass(id);
-                        }, 1000);
-
-                        // hide all id 
-                        $("div[id^='sesi-']").hide();
-                        // show sesi 
-                        $("#"+id).show();
-                        
-                        // scroll to top 
-                        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                            $([document.documentElement, document.body]).animate({
-                                scrollTop: $("#elementtoScrollToID").offset().top
-                            }, 1000);
-                        }
+                        $(".btnSimpan").html("Saving...");
+                        $(".btnSimpan").prop("disabled", true);
+                        $(".btnBack").prop("disabled", true);
+                        $("#formSoal").submit()
                     }
                 })
             }
-        }
-    })
-    
-    $(".btnBack").click(function(){
-        let id = $(this).data("id");
-        $("div[id^='sesi-']").hide();
-        $("#"+id).show();
-    })
+        })
 
-    $(".btnSimpan").click(function(){
-        let id = $(this).data("id");
-        jumlah_soal = $("[name='"+id+"']").val();
+        $('input:radio').click(function () {
+            let id = $(this).data("id");
+            id = id.split("|");
+            let value = $(this).val();
+            $("#jawaban_sesi_"+id[0]+""+id[1]).val(value);
 
-        sesi = id.replace("sesi-", "");
-        sesi = parseInt(sesi-1);
+            localStorage.setItem("jawaban_sesi_"+id[0]+""+id[1], value);
+        });
+    });
 
-        if($('#sesi-'+sesi+' input:radio:checked').length != jumlah_soal){
-        
-            $.each($("#sesi-"+sesi+" [name='jawaban_sesi_"+sesi+"[]']"), function(){
-                index = $(this).data("id");
-                $("#sesi-"+sesi+" #"+index).removeClass("list-group-item-danger")
+    $(document).mouseleave(function () {
+        showAlertWithCountdown(10)
+    });
 
-                if($(this).val() == "null"){
-                    $("#sesi-"+sesi+" #"+index).addClass("list-group-item-danger")
-                }
-            })
-
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'You haven’t submitted your answer in this session',
-            })
-        } else {
-            Swal.fire({
-                icon: 'question',
-                html: 'Finish the test?',
-                showCloseButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No'
-            }).then(function (result) {
-                if (result.value) {
-                    swal.fire({
-                        html: '<h4>Saving your answer ...</h4>',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        onBeforeOpen: () => {
-                            Swal.showLoading()
-                        },
-                    });
-
-                    $(".btnSimpan").html("Saving...");
-                    $(".btnSimpan").prop("disabled", true);
-                    $(".btnBack").prop("disabled", true);
-                    $("#formSoal").submit()
-                }
-            })
-        }
-    })
+    $(document).mouseenter(function () {
+        returnWorkSheet()
+    });
 
     function secpass(id) {
         'use strict';
@@ -668,6 +859,10 @@
         countDiv.innerHTML = min + ":" + remSec;
         if (sec > 0) {
             sec = sec - 1;
+
+            // localStorage store data waktu
+            localStorage.setItem('time', sec);
+            // localStorage store data waktu
         } else {
             if(id == 'sesi-2'){
                 clearInterval(countDown);
@@ -689,7 +884,9 @@
                     $("div[id^='sesi-']").hide();
                     // show sesi 
                     $("#sesi-3").show();
+                    localStorage.setItem('sesi', 'sesi-3');
 
+                    // sec = 55 * 1;
                     sec = 55 * 60
                     countDown = setInterval(function () {
                         'use strict';
@@ -723,13 +920,6 @@
             }
         }
     }
-
-    $('input:radio').click(function () {
-        let id = $(this).data("id");
-        id = id.split("|");
-        let value = $(this).val();
-        $("#jawaban_sesi_"+id[0]+""+id[1]).val(value);
-    });
 
     document.addEventListener('play', function(e){  
         var audios = document.getElementsByTagName('audio');  
@@ -766,4 +956,19 @@
             clearInterval(countdownInterval);
         }
     }
+
+    // localStorage function untuk menentukan current time
+    function getCurrentTime() {
+        let now = new Date();
+        let hours = now.getHours() * 60 * 60;
+        let minutes = now.getMinutes() * 60;
+        let seconds = now.getSeconds();
+        return parseInt(hours + minutes + seconds);
+    }
+
+    function updateTimeInLocalStorage() {
+        let currentTime = getCurrentTime();
+        localStorage.setItem('currentTime', currentTime);
+    }
+    // localStorage function untuk menentukan current time
 </script>

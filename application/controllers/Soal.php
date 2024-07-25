@@ -22,6 +22,22 @@ class Soal extends CI_Controller {
         $data['background'] = $this->Main_model->get_one("config", ["field" => 'background']);
         
         $data['link'] = $this->Main_model->get_one("config", ['field' => "web admin"]);
+
+        $data['reload_page'] = $this->db->query("
+            SELECT
+                *
+            FROM config
+            WHERE field = 'reload_page'
+        ")->row_array();
+
+        $data['time_reload'] = $this->db->query("
+            SELECT
+                *
+            FROM config
+            WHERE field = 'time_reload'
+        ")->row_array();
+
+        // var_dump($data);
         
         if($tes['status'] == "Berjalan"){
             // $data['cek'] = $this->Main_model->get_one("item_soal", ["id_item" => 7]);
